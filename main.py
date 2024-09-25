@@ -1,22 +1,6 @@
 #!/usr/bin/python3
 
-"""
- things to consider when calculating fatigue:
-	1. actual day
-		1.1. training kms -- kms -- float
-		1.2. training avg HR -- trAvgHr -- int
-		1.3. training highest HR -- trHiHr -- int
-		1.4. user's actual energy level after training (0-10) -- enrgyLev -- int
-		1.5. hours of sleep -- hSlp -- float
-		1.6. HRV -- hrv -- int
-
-		1.7. generate a float number to determine that day fatigue -- dayIndex
-
-		-------------------- done until here -----------------------
-
-	3. Considering the last 30 days of training, give a fatigue index
-		3.1. substract from that index the fully rested fatigue
-"""
+import sys
 
 class ActualDay:
 	def __init__(self, kms:float, trAvgHr:int, trHiHr:int, enrgyLev:int, hSlp:float, hrv:int):
@@ -98,12 +82,53 @@ class ActualDay:
 
 		return index
 
+def getIndexes(actDayIndex:float) -> list:
+    # for the moment, I'm simulating the last 30 days list,
+    # but the idea is to get it from a db or file or excel
+
+    lst30dIndex = [ 30,22.1,42,33,32,51,11,32.7,32.1,48,
+                    10,24.33,33,12.2,60,31,40,24,52,11,
+                    42,42,27.3,39,9.1212,50,35,25,44]
+
+    lst30dIndex.append(actDayIndex)
+    return lst30dIndex
+
+def subsRest(index:float) -> float:
+    return index
+
+def generateIndex(allindex:list) -> float:
+    # depending on the last 30 days indexes, return the median
+    # to be able to calculate this, I need this function to get a list with the last 30 days indexes
+    index = 0
+    lenIndex = len(allindex)
+    for i in allindex:
+        index += i
+
+    # here I have to substract the resting
+    index = subsRest(index)
+    index = round(index)
+    return index
+
 if __name__ == '__main__':
-	trZones = {	"Zone 1":[0,132],
-				"Zone 2":[133,153],
-				"Zone 3":[154,169],
-				"Zone 4":[170,179],
-				"Zone 5":[180,192]}
+    try:
+	   trZones = {	"Zone 1":[0,132],
+				    "Zone 2":[133,153],
+				    "Zone 3":[154,169],
+				    "Zone 4":[170,179],
+				    "Zone 5":[180,192]}
 	
-	newDay = ActualDay.generateIndex(15, 143, 162, 7, 5.5, 112)
-	print(newDay)
+        try:
+	        #actDayIndex = ActualDay.generateIndex(15, 143, 162, 7, 5.5, 112)
+	        actDayIndex = ActualDay.generateIndex(int(input("how many kms did you do today?: ")),
+                                                    int(input("what was your avg HR?: ")),
+                                                    int(input("what was your max HR?: ")),
+                                                    int(input("what are your actual energy levels (0 - 10)?: ")),
+                                                    float(input("how many hours did you sleep?: ")),
+                                                    int(input("what was your HRV today?: ")))
+	        allIndex = getIndexes(actDayIndex)
+	        print(generateIndex(allIndex))
+
+        except Exception as e:
+            print(e)
+    except KeyboardInterrupt:
+        sys.exit()
