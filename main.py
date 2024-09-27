@@ -12,7 +12,7 @@ class ActualDay:
         self.hSlp = hSlp
         self.hrv = hrv
 
-    def generateIndex(kms, trAvgHr, trHiHr, enrgyLev, hSlp, hrv) -> float:
+    def genIndex(kms, trAvgHr, trHiHr, enrgyLev, hSlp, hrv) -> float:
         try:
             # have to reduce this
             # calculate kms index
@@ -84,15 +84,20 @@ class ActualDay:
                 index = index + 8
 
             return index
-            insertDB.insert(round(index))
         
         except Exception as e:
             print(e)
 
-def getIndexes(actDayIndex:float) -> list:
+def getIndexes(actDayIndex:float, afile:str) -> list:
     try:
         # for the moment, I'm simulating the last 30 days list,
         # but the idea is to get it from a db or file or excel
+
+
+        # from file
+        with open afile as file:
+            for i in file:
+                pass
 
         lst30dIndex = [ 30,22.1,42,33,32,51,11,32.7,32.1,48,
                         10,24.33,33,12.2,60,31,40,24,52,11,
@@ -128,11 +133,7 @@ def generateIndex(allindex:list) -> float:
 
 if __name__ == '__main__':
     try:
-        trZones = { "Zone 1":[0,132],
-                    "Zone 2":[133,153],
-                    "Zone 3":[154,169],
-                    "Zone 4":[170,179],
-                    "Zone 5":[180,192]}
+        
         
         try:
             #actDayIndex = ActualDay.generateIndex(15, 143, 162, 7, 5.5, 112)
@@ -142,17 +143,25 @@ if __name__ == '__main__':
                         int(input("what are your actual energy levels (0 - 10)?: ")),
                         float(input("how many hours did you sleep?: ")),
                         int(input("what was your HRV today?: "))]
-            actDayIndex = ActualDay.generateIndex(userQuest[0],
-                                                    userQuest[1],
-                                                    userQuest[2],
-                                                    userQuest[3],
-                                                    userQuest[4],
-                                                    userQuest[5])
-
-            allIndex = getIndexes(actDayIndex)
+            trZones = { "Zone 1":[0,132],
+                        "Zone 2":[133,153],
+                        "Zone 3":[154,169],
+                        "Zone 4":[170,179],
+                        "Zone 5":[180,192]}
+            actDayIndex = ActualDay.genIndex(userQuest[0],
+                                            userQuest[1],
+                                            userQuest[2],
+                                            userQuest[3],
+                                            userQuest[4],
+                                            userQuest[5])
+            # path to db file
+            ifile = "./DB/db.txt"
+            allIndex = getIndexes(actDayIndex, ifile)
             finalIndex = generateIndex(allIndex)
             finalIndex = subsRest(finalIndex, userQuest)
             print(finalIndex)
+
+            #insertDB.insert(round(index))
 
         except Exception as e:
             print(e)
