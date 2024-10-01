@@ -26,6 +26,9 @@ dayIndex:float
 
 # substract from that index the fully rested fatigue
 dayIndex:float
+
+# maybe it should have a rest calculation as well
+restDay:float
 ```
 
 2. Considering the last 30 days of training, give a fatigue index
