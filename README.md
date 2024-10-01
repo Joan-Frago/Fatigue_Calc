@@ -29,6 +29,6 @@ dayIndex:float
 ```
 
 2. Considering the last 30 days of training, give a fatigue index
-````python
+```python
 index:int
 ```
